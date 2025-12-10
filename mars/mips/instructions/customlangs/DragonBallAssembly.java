@@ -1,4 +1,4 @@
-    package mars.mips.instructions.customlangs;
+inte    package mars.mips.instructions.customlangs;
     import mars.mips.hardware.*;
     import mars.*;
     import mars.util.*;
