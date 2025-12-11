@@ -57,7 +57,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("gas $t0, 50",
                         "Add to the value of the speed of the car.",
                         BasicInstructionFormat.I_FORMAT,
-                        "000010 sssss ttttt ################",
+                        "000010 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -74,7 +74,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("brke $t0, 50",
                         "Hit the brakes! Subtract from the speed of the car.",
                         BasicInstructionFormat.I_FORMAT,
-                        "000011 sssss ttttt ################",
+                        "000011 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -90,7 +90,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("tr $t0, 30",
                         "Add to the angle of the car (right is positive).",
                         BasicInstructionFormat.I_FORMAT,
-                        "000100 sssss ttttt ################",
+                        "000100 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -107,7 +107,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("tl $t0, 30",
                         "Subtract from the angle of the car (left is negative).",
                         BasicInstructionFormat.I_FORMAT,
-                        "000101 sssss ttttt ################",
+                        "000101 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -203,15 +203,14 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("ison $t0, label",
                         "Check if your car is on and jump to label to execute actions.",
                         BasicInstructionFormat.I_BRANCH_FORMAT,
-                        "001010 sssss 00000 ################",
+                        "001010 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
                                 int rs = RegisterFile.getValue(operands[0]);
 
                                 if (rs == 1) {
-                                    int targetAddress = operands[1];
-                                    RegisterFile.setProgramCounter(targetAddress);
+                                    Globals.instructionSet.processBranch(operands[1]);
                                 }
                             }
                         }));
@@ -220,15 +219,14 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("isoff $t0, label",
                         "Check if your car is off and jump to label to execute actions.",
                         BasicInstructionFormat.I_BRANCH_FORMAT,
-                        "001011 sssss 00000 ################",
+                        "001011 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
                                 int rs = RegisterFile.getValue(operands[0]);
 
                                 if (rs == 0) {
-                                    int targetAddress = operands[1];
-                                    RegisterFile.setProgramCounter(targetAddress);
+                                    Globals.instructionSet.processBranch(operands[1]);
                                 }
                             }
                         }));
@@ -265,7 +263,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("stvl $t0, 100",
                         "Set a value necessary for any register.",
                         BasicInstructionFormat.I_FORMAT,
-                        "001110 sssss ttttt ################",
+                        "001110 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -306,7 +304,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("gtg $t0, 100",
                         "Add fuel to the car.",
                         BasicInstructionFormat.I_FORMAT,
-                        "001111 sssss ttttt ################",
+                        "001111 fffff 00000 ssssssssssssssss",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -387,7 +385,7 @@ public class Car extends CustomAssembly {
                 new BasicInstruction("skid $t0, $t1, label",
                         "If the angle ($t0) is larger than a certain angle value ($t1), car will skid. After skid, jump to label.",
                         BasicInstructionFormat.I_BRANCH_FORMAT,
-                        "010000 sssss ttttt ################",
+                        "010000 fffff sssss tttttttttttttttt",
                         new SimulationCode() {
                             public void simulate(ProgramStatement statement) throws ProcessingException {
                                 int[] operands = statement.getOperands();
@@ -396,8 +394,7 @@ public class Car extends CustomAssembly {
 
 
                                 if (rs > rt) {
-                                    int targetAddress = operands[2];
-                                    RegisterFile.setProgramCounter(targetAddress);
+                                    Globals.instructionSet.processBranch(operands[2]);
                                 }
 
                             }
